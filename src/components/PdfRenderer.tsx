@@ -152,7 +152,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             <RotateCw className="h-4 w-4" />
           </Button>
 
-          <PdfFullScreen fileUrl={url} />
+          <PdfFullScreen fileUrl={url as string} />
         </div>
       </div>
 
@@ -175,7 +175,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
                   variant: "destructive",
                 });
               }}
-              file={url}
+              file={url as string}
               className="max- h-full"
             >
               {isLoading && renderedScale ? (
