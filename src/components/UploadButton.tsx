@@ -1,20 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { Dialog, DialogContent } from "./ui/dialog";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import { useState } from "react";
 import { Button } from "./ui/button";
+import { Dialog, DialogContent } from "./ui/dialog";
 
-import Dropzone from "react-dropzone";
-import { Cloud, File, Loader2 } from "lucide-react";
-import { Progress } from "./ui/progress";
-import { useUploadThing } from "@/lib/uploadthing";
-import { useToast } from "./ui/use-toast";
 import { trpc } from "@/app/_trpc/client";
+import { useUploadThing } from "@/lib/uploadthing";
+import { Cloud, File, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { start } from "repl";
+import Dropzone from "react-dropzone";
+import { Progress } from "./ui/progress";
+import { useToast } from "./ui/use-toast";
 
-const UploadDropzone = () => {
+const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -28,7 +27,9 @@ const UploadDropzone = () => {
     retryDelay: 500,
   });
 
-  const { startUpload } = useUploadThing("pdfUploader");
+  const { startUpload } = useUploadThing(
+    isSubscribed ? "proPlanUploader" : "freePlanUploader"
+  );
 
   const startSimulatedProgress = () => {
     setUploadProgress(0);
@@ -94,7 +95,9 @@ const UploadDropzone = () => {
                   <span className="font-semibold">Click to upload</span> or drag
                   or drop
                 </p>
-                <p className="text-xs text-zinc-500">PDF (up to 4MB)</p>
+                <p className="text-xs text-zinc-500">
+                  PDF (up to {isSubscribed ? "16" : "4"}MB)
+                </p>
               </div>
 
               {acceptedFiles && acceptedFiles[0] ? (
@@ -139,7 +142,7 @@ const UploadDropzone = () => {
   );
 };
 
-const UploadButton = () => {
+const UploadButton = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <Dialog
@@ -155,7 +158,7 @@ const UploadButton = () => {
       </DialogTrigger>
 
       <DialogContent>
-        <UploadDropzone />
+        <UploadDropzone isSubscribed={isSubscribed} />
       </DialogContent>
     </Dialog>
   );
